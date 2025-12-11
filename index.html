@@ -10,7 +10,7 @@
 
 <style>
     /* ----------------------------------------------------
-        デザインスタイル (kakeibo_V7.09 調整版)
+        デザインスタイル (V7.09 調整版)
        ---------------------------------------------------- */
     body { 
         font-family: sans-serif; margin: 0; padding: 0; 
@@ -60,10 +60,10 @@
         font-size: 0.95em; 
     }
     th { color: #aaa; font-weight: normal; font-size: 0.85em; text-align: center; padding-bottom: 2px; }
-    td { vertical-align: top; padding: 0 1px; } /* 内容が折り返してもズレないようtop揃え */
+    td { vertical-align: top; padding: 0 1px; }
 
-    /* カラム幅設定 */
-    .col-date { width: 48px; }         /* 日付 (数字が見えるように幅を拡張) */
+    /* カラム幅設定：ここを修正 (48px -> 54px) */
+    .col-date { width: 54px; }         /* 日付 (22/22が入るように拡大) */
     .col-money { width: 70px; }        /* 金額 */
     .col-btn { width: 28px; }          /* ボタン幅 */
     
@@ -74,23 +74,32 @@
         color: #fff; font-size: 1.1em; padding: 2px; 
     }
     
-    /* 家計簿用テキストエリア（折り返し対応・高さ自動） */
+    /* 家計簿用テキストエリア（折り返し対応） */
     textarea.kakeibo-text { 
         width: 100%; 
         color: #eee; 
         resize: none; 
         line-height: 1.4em;
-        min-height: 2.2em; /* 1行分の最低高さ */
-        white-space: pre-wrap; /* 折り返しを許可 */
-        word-break: break-all; /* 長い単語も折り返す */
-        overflow: hidden; /* スクロールバーを隠す */
+        min-height: 2.2em;
+        white-space: pre-wrap; 
+        word-break: break-all;
+        overflow: hidden;
         vertical-align: middle;
         padding: 4px 2px;
     }
     
     input { height: 2.2em; }
     input.day-input { text-align: center; width: 100%; font-family: monospace; font-weight: bold; padding: 2px 0; }
-    input.date-input { text-align: center; width: 100%; font-family: monospace; font-weight: bold; }
+    
+    /* 日付入力欄：内部余白を削って文字を表示させる */
+    input.date-input { 
+        text-align: center; 
+        width: 100%; 
+        font-family: monospace; 
+        font-weight: bold; 
+        padding: 0; /* 余白削除 */
+    }
+    
     input.money-input { 
         text-align: right; color: #80d8ff; width: 100%; 
         font-family: monospace; font-weight: bold; letter-spacing: -0.5px; 
@@ -125,7 +134,6 @@
     .btn-toggle-memo { background: #1b5e20; color: #fff; border: 1px solid #4caf50; border-radius: 4px; width: 32px; height: 32px; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
     .memo-card-body { font-family: 'Consolas', 'Monaco', monospace; color: #e0e0e0; font-size: 1.05em; line-height: 1.5; white-space: pre-wrap; word-break: break-all; border-top: 1px dashed #444; margin-top: 8px; padding-top: 8px; }
-    /* 閉じた時：2行だけ表示 */
     .memo-card-body.collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #888; border-top: none; }
 
     #memo-editor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 2000; padding-top: env(safe-area-inset-top); flex-direction: column; }
@@ -671,7 +679,6 @@
         const t=document.createElement('textarea'); t.className="kakeibo-text"; t.value=v||""; t.rows=1;
         t.oninput=function(){ autoResize(this); }; 
         t.onblur=function(){ cb(this.value); };
-        // 初期表示時に高さを合わせる
         setTimeout(() => autoResize(t), 0);
         return t;
     }
