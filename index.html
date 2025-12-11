@@ -10,7 +10,7 @@
 
 <style>
     /* ----------------------------------------------------
-       デザインスタイル (V7.08版)
+        デザインスタイル (kakeibo_V7.09 調整版)
        ---------------------------------------------------- */
     body { 
         font-family: sans-serif; margin: 0; padding: 0; 
@@ -60,10 +60,10 @@
         font-size: 0.95em; 
     }
     th { color: #aaa; font-weight: normal; font-size: 0.85em; text-align: center; padding-bottom: 2px; }
-    td { vertical-align: middle; padding: 0 1px; }
+    td { vertical-align: top; padding: 0 1px; } /* 内容が折り返してもズレないようtop揃え */
 
     /* カラム幅設定 */
-    .col-date { width: 32px; }         /* 日付 */
+    .col-date { width: 48px; }         /* 日付 (数字が見えるように幅を拡張) */
     .col-money { width: 70px; }        /* 金額 */
     .col-btn { width: 28px; }          /* ボタン幅 */
     
@@ -74,16 +74,18 @@
         color: #fff; font-size: 1.1em; padding: 2px; 
     }
     
-    /* 家計簿用テキストエリア（1行固定・横スクロール） */
+    /* 家計簿用テキストエリア（折り返し対応・高さ自動） */
     textarea.kakeibo-text { 
         width: 100%; 
         color: #eee; 
         resize: none; 
-        height: 2.2em; 
-        line-height: 1.8em;
-        white-space: nowrap; /* 折り返さない */
-        overflow-x: auto; /* 横スクロール許可 */
+        line-height: 1.4em;
+        min-height: 2.2em; /* 1行分の最低高さ */
+        white-space: pre-wrap; /* 折り返しを許可 */
+        word-break: break-all; /* 長い単語も折り返す */
+        overflow: hidden; /* スクロールバーを隠す */
         vertical-align: middle;
+        padding: 4px 2px;
     }
     
     input { height: 2.2em; }
@@ -659,12 +661,21 @@
         return i;
     }
     function createSuf(t){const s=document.createElement('span');s.className="day-suffix";s.innerText=t;return s;}
+    
+    function autoResize(t) {
+        t.style.height = 'auto';
+        t.style.height = t.scrollHeight + 'px';
+    }
+
     function createTxt(v,cb){
         const t=document.createElement('textarea'); t.className="kakeibo-text"; t.value=v||""; t.rows=1;
         t.oninput=function(){ autoResize(this); }; 
         t.onblur=function(){ cb(this.value); };
+        // 初期表示時に高さを合わせる
+        setTimeout(() => autoResize(t), 0);
         return t;
     }
+    
     function createMon(v, cb, bCb, isBig = false){
         const i=document.createElement('input');
         i.type="tel"; i.className = isBig ? "summary-input" : "money-input";
@@ -698,7 +709,6 @@
         if (nums.length === 3) return parseInt(nums.slice(0,1)) + "/" + parseInt(nums.slice(1,3));
         return val;
     }
-    function autoResize(textarea) { /* 横スクロールのみなので高さ調整不要 */ }
     function formatNum(num) { return num ? Number(num).toLocaleString() : "0"; }
 
     window.addAnnualItem = (k) => {
