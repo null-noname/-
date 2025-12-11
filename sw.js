@@ -1,20 +1,26 @@
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open('kakeibo-cache-v1').then(cache => {
-      return cache.addAll([
-        './',
-        './index.html',
-        './manifest.json',
-        './sw.js'
-      ]);
-    })
-  );
+const CACHE_NAME = 'kakeibo-cleanup-v1';
+
+// 1. インストールされたら、すぐに動き出す
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(res => {
-      return res || fetch(e.request);
-    })
-  );
+// 2. 起動したら、過去のキャッシュを全て削除する
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    console.log('古いキャッシュを削除しました:', cacheName);
+                    return caches.delete(cacheName);
+                })
+            );
+        }).then(() => {
+            // 3. 自分自身（Service Worker）の登録を解除する
+            return self.registration.unregister();
+        }).then(() => {
+            // 4. 開いているページをコントロール下に置く（リロードを促すため）
+            return self.clients.claim();
+        })
+    );
 });
