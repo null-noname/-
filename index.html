@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>クラウド家計簿 V7.0 (Firebase Sync)</title>
+<title>クラウド家計簿 V7.1 (Firebase Fix)</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -207,11 +207,17 @@
         
         currentMonth = data.lastViewedMonth || 1;
         isDataLoaded = true;
-        render();
         
-        if(statusEl) {
-            statusEl.innerText = "● 同期完了";
-            setTimeout(() => { statusEl.innerText = ""; }, 2000);
+        // 描画実行（try-catchでエラー時に止まらないようにする）
+        try {
+            render();
+            if(statusEl) {
+                statusEl.innerText = "● 同期完了";
+                setTimeout(() => { statusEl.innerText = ""; }, 2000);
+            }
+        } catch(e) {
+            console.error("Render Error:", e);
+            if(statusEl) statusEl.innerText = "× 描画エラー";
         }
     });
 
@@ -306,10 +312,14 @@
         if(!data.years[data.currentYear] || !data.years[data.currentYear].months[currentMonth]) return;
         const block = data.years[data.currentYear].months[currentMonth][bIdx];
         let s1=0, s2=0;
+        
+        // 【修正】ここも items が空(null)の場合に備えて || [] を追加
+        const items = block.items || [];
+        
         if(block.type === 'standard') {
-            block.items.forEach(i => { s1 += Number(i.plan); s2 += Number(i.act); });
+            items.forEach(i => { s1 += Number(i.plan); s2 += Number(i.act); });
         } else {
-            block.items.forEach(i => { s1 += Number(i.out); s2 += Number(i.in); });
+            items.forEach(i => { s1 += Number(i.out); s2 += Number(i.in); });
         }
         const el1 = document.getElementById(`t1-${bIdx}`);
         const el2 = document.getElementById(`t2-${bIdx}`);
@@ -422,7 +432,11 @@
                 t.innerHTML=`<thead><tr><th class="col-date-month">日付</th><th>重賞名</th><th class="col-money">入金</th><th class="col-money">払戻</th><th class="col-del"></th></tr></thead>`;
             }
 
-            b.items.forEach((it,ii)=>{
+            // 【修正】ここがエラーの原因でした！
+            // items が null の場合でも空配列 [] として扱うように修正
+            const items = b.items || [];
+
+            items.forEach((it,ii)=>{
                 const tr=document.createElement('tr');
                 const tdD=document.createElement('td'); const w=document.createElement('div'); w.style.display="flex"; w.style.alignItems="center"; w.style.justifyContent="center";
                 w.append(createInp(it.date, v=>updIt(bi,ii,'date',v), 'day'), createSuf("日")); tdD.appendChild(w);
@@ -445,10 +459,10 @@
             const trTotal = document.createElement('tr'); trTotal.className = 'total-row';
             let s1=0, s2=0;
             if(b.type==='standard'){ 
-                b.items.forEach(i=>{s1+=Number(i.plan);s2+=Number(i.act)});
+                items.forEach(i=>{s1+=Number(i.plan);s2+=Number(i.act)});
                 trTotal.innerHTML=`<td class="total-label">合計</td><td></td><td><div class="total-val-box" id="t1-${bi}">${formatNum(s1)}</div></td><td><div class="total-val-box" id="t2-${bi}">${formatNum(s2)}</div></td><td></td>`; 
             } else { 
-                b.items.forEach(i=>{s1+=Number(i.out);s2+=Number(i.in)});
+                items.forEach(i=>{s1+=Number(i.out);s2+=Number(i.in)});
                 trTotal.innerHTML=`<td></td><td class="total-label">合計</td><td><div class="total-val-box" id="t1-${bi}">${formatNum(s1)}</div></td><td><div class="total-val-box" id="t2-${bi}">${formatNum(s2)}</div></td><td></td>`; 
             }
             tb.appendChild(trTotal); t.appendChild(tb);
@@ -510,14 +524,20 @@
     window.delBk=(i)=>{if(confirm("削除しますか？")){data.years[data.currentYear].months[currentMonth].splice(i,1);saveData();render()}};
     window.updBkTi=(i,v)=>{data.years[data.currentYear].months[currentMonth][i].title=v;saveData()};
     window.updBkVal=(i,key,v)=>{data.years[data.currentYear].months[currentMonth][i][key]=v;saveData()};
-    window.addIt=(i)=>{const b=data.years[data.currentYear].months[currentMonth][i];if(b.type==='standard')b.items.push({date:"",name:"",plan:0,act:0});else b.items.push({date:"",name:"",out:0,in:0});saveData();render()};
+    
+    window.addIt=(i)=>{
+        const b=data.years[data.currentYear].months[currentMonth][i];
+        if(!b.items) b.items = []; // 【修正】ここも items がない場合に作成するよう修正
+        if(b.type==='standard')b.items.push({date:"",name:"",plan:0,act:0});else b.items.push({date:"",name:"",out:0,in:0});
+        saveData();render();
+    };
+    
     window.updIt=(b,i,k,v)=>{data.years[data.currentYear].months[currentMonth][b].items[i][k]=v;saveData()};
     window.delIt=(b,i)=>{data.years[data.currentYear].months[currentMonth][b].items.splice(i,1);saveData();render()};
     window.changeYear=()=>{data.currentYear=document.getElementById('year-select').value;render()};
     window.addNewYear=()=>{const n=prompt("追加する西暦（例: 2026）");if(n&&!data.years[n]){const c=data.years[data.currentYear];const ny=createNewYearData();ny.annualYear=JSON.parse(JSON.stringify(c.annualYear));ny.annualMonth=JSON.parse(JSON.stringify(c.annualMonth));ny.isAnnualYearOpen=c.isAnnualYearOpen;ny.isAnnualMonthOpen=c.isAnnualMonthOpen;data.years[n]=ny;data.currentYear=n;saveData();render();alert(n+"年を追加しました")}else if(data.years[n])alert("その年は既にあります")};
     window.deleteYear=()=>{if(Object.keys(data.years).length<=1){alert("削除できません");return}if(confirm(data.currentYear+"年を削除しますか？")){delete data.years[data.currentYear];data.currentYear=Object.keys(data.years).sort()[0];saveData();render()}};
 
-    // 初回はFirebaseを待つため、ここではrenderしない
     document.getElementById('sync-status').innerText = "接続中...";
 </script>
 </body>
