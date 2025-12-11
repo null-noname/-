@@ -10,7 +10,7 @@
 
 <style>
     /* ----------------------------------------------------
-       デザインスタイル (V7.06 並び替え＆チラ見せ機能版)
+       デザインスタイル (V7.08版)
        ---------------------------------------------------- */
     body { 
         font-family: sans-serif; margin: 0; padding: 0; 
@@ -51,109 +51,88 @@
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* --- ▼▼▼ メモ帳スタイル (V7.06) ▼▼▼ --- */
+    /* --- テーブルレイアウト調整 (スマホ特化) --- */
+    table { 
+        width: 100%; 
+        border-collapse: separate; 
+        border-spacing: 0 4px; 
+        table-layout: fixed; 
+        font-size: 0.95em; 
+    }
+    th { color: #aaa; font-weight: normal; font-size: 0.85em; text-align: center; padding-bottom: 2px; }
+    td { vertical-align: middle; padding: 0 1px; }
+
+    /* カラム幅設定 */
+    .col-date { width: 32px; }         /* 日付 */
+    .col-money { width: 70px; }        /* 金額 */
+    .col-btn { width: 28px; }          /* ボタン幅 */
     
+    /* 入力フォーム */
+    input, textarea { 
+        box-sizing: border-box; border: 1px solid #444; 
+        background: #2a2a2a; border-radius: 3px; 
+        color: #fff; font-size: 1.1em; padding: 2px; 
+    }
+    
+    /* 家計簿用テキストエリア（1行固定・横スクロール） */
+    textarea.kakeibo-text { 
+        width: 100%; 
+        color: #eee; 
+        resize: none; 
+        height: 2.2em; 
+        line-height: 1.8em;
+        white-space: nowrap; /* 折り返さない */
+        overflow-x: auto; /* 横スクロール許可 */
+        vertical-align: middle;
+    }
+    
+    input { height: 2.2em; }
+    input.day-input { text-align: center; width: 100%; font-family: monospace; font-weight: bold; padding: 2px 0; }
+    input.date-input { text-align: center; width: 100%; font-family: monospace; font-weight: bold; }
+    input.money-input { 
+        text-align: right; color: #80d8ff; width: 100%; 
+        font-family: monospace; font-weight: bold; letter-spacing: -0.5px; 
+        padding-right: 2px; font-size: 1.0em; 
+    }
+    
+    /* 操作ボタン */
+    .mini-btn {
+        width: 100%; height: 2.2em;
+        padding: 0; margin: 0;
+        border-radius: 3px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.0em; cursor: pointer;
+        border: 1px solid #555;
+    }
+    .btn-up { background: #333; color: #81c784; font-weight: bold; }
+    .btn-del { background: #333; color: #e57373; font-weight: bold; }
+
+    /* --- メモ帳スタイル --- */
     .memo-card {
         background: #202020; border: 1px solid #333; border-radius: 8px;
         padding: 12px 15px; margin-bottom: 15px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         transition: all 0.2s ease;
     }
+    .memo-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .memo-card-title { font-weight: bold; color: #81c784; font-size: 1.2em; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 8px; }
+    .memo-ctrl-btns { display: flex; gap: 5px; align-items: center; }
     
-    .memo-card-header {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 5px;
-    }
-    
-    .memo-card-title { 
-        font-weight: bold; color: #81c784; font-size: 1.2em; 
-        flex: 1; 
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        margin-right: 8px;
-    }
-    
-    .memo-ctrl-btns {
-        display: flex; gap: 5px; align-items: center;
-    }
+    .btn-edit-mode { background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; padding: 0 12px; height: 32px; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; }
+    .btn-icon { background: #333; color: #aaa; border: 1px solid #555; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1.2em; cursor: pointer; }
+    .btn-toggle-memo { background: #1b5e20; color: #fff; border: 1px solid #4caf50; border-radius: 4px; width: 32px; height: 32px; font-weight: bold; font-size: 1.2em; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-    /* 各種ボタン */
-    .btn-icon {
-        background: #333; color: #aaa; 
-        border: 1px solid #555; border-radius: 4px;
-        width: 32px; height: 32px; 
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.2em; cursor: pointer;
-    }
-    .btn-edit-mode {
-        background: #333; color: #fff; 
-        border: 1px solid #555; border-radius: 4px;
-        padding: 0 12px; height: 32px;
-        font-size: 0.9em; cursor: pointer; display: flex; align-items: center;
-    }
-    .btn-toggle-memo {
-        background: #1b5e20; color: #fff;
-        border: 1px solid #4caf50; border-radius: 4px;
-        width: 32px; height: 32px;
-        font-weight: bold; font-size: 1.2em;
-        display: flex; align-items: center; justify-content: center; cursor: pointer;
-    }
+    .memo-card-body { font-family: 'Consolas', 'Monaco', monospace; color: #e0e0e0; font-size: 1.05em; line-height: 1.5; white-space: pre-wrap; word-break: break-all; border-top: 1px dashed #444; margin-top: 8px; padding-top: 8px; }
+    /* 閉じた時：2行だけ表示 */
+    .memo-card-body.collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #888; border-top: none; }
 
-    /* メモ本文の表示エリア */
-    .memo-card-body {
-        font-family: 'Consolas', 'Monaco', monospace; 
-        color: #e0e0e0; font-size: 1.05em; 
-        line-height: 1.5;
-        white-space: pre-wrap; 
-        word-break: break-all;
-        border-top: 1px dashed #444; 
-        margin-top: 8px; padding-top: 8px;
-    }
-
-    /* ▼▼▼ チラ見せ機能（閉じた時のスタイル） ▼▼▼ */
-    .memo-card-body.collapsed {
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* 2行制限 */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        color: #888; /* 少し暗くする */
-        font-size: 0.95em;
-        border-top: none; /* 閉じてる時は線なし */
-    }
-
-    /* 編集モード */
-    #memo-editor { 
-        display: none; 
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #121212; z-index: 2000;
-        padding-top: env(safe-area-inset-top);
-        flex-direction: column;
-    }
+    #memo-editor { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 2000; padding-top: env(safe-area-inset-top); flex-direction: column; }
     #memo-editor.active { display: flex; }
+    .editor-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #202020; border-bottom: 1px solid #333; }
+    input.memo-title-input { width: 100%; background: transparent; border: none; color: #fff; font-size: 1.2em; font-weight: bold; padding: 10px 15px; border-bottom: 1px solid #333; outline: none; }
+    textarea.memo-body { flex: 1; width: 100%; background: #272727; color: #f0f0f0; border: none; padding: 15px; font-size: 16px; line-height: 1.6; font-family: 'Consolas', 'Monaco', monospace; resize: none; outline: none; box-sizing: border-box; }
 
-    .editor-toolbar { 
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 10px 15px; background: #202020; border-bottom: 1px solid #333;
-    }
-    
-    input.memo-title-input { 
-        width: 100%; background: transparent; border: none;
-        color: #fff; font-size: 1.2em; font-weight: bold;
-        padding: 10px 15px; border-bottom: 1px solid #333;
-        outline: none;
-    }
-    
-    textarea.memo-body { 
-        flex: 1; width: 100%; 
-        background: #272727; color: #f0f0f0; 
-        border: none; padding: 15px; 
-        font-size: 16px; 
-        line-height: 1.6; 
-        font-family: 'Consolas', 'Monaco', monospace;
-        resize: none; outline: none;
-        box-sizing: border-box;
-    }
-
-    /* --- 以下、共通スタイル --- */
+    /* --- その他 --- */
     h2 { font-size: 1.2em; border-left: 6px solid #2e7d32; padding-left: 10px; margin: 20px 0 10px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
     .btn-green { background: #2e7d32; color: #fff; border: 1px solid #4caf50; border-radius: 4px; padding: 8px 14px; font-size: 1em; }
     .btn-red { background: #c62828; color: #fff; border: 1px solid #e57373; border-radius: 4px; padding: 6px 12px; font-size: 0.9em; }
@@ -165,13 +144,6 @@
     .btn-toggle { background: #333; color: #fff; border: 1px solid #555; border-radius: 4px; width: 34px; height: 34px; font-weight: bold; font-size: 1.2em; margin-left: 8px; display: inline-flex; align-items: center; justify-content: center; }
     .add-row-btn { width: 100%; padding: 10px; margin-top: 5px; background: #2e7d32; color: #fff; border: 1px solid #4caf50; border-radius: 4px; font-size: 1.1em; cursor: pointer; }
     
-    input, textarea { box-sizing: border-box; border: 1px solid #444; background: #2a2a2a; border-radius: 3px; color: #fff; font-size: 1.15em; padding: 2px; }
-    textarea.kakeibo-text { width: 100%; color: #eee; resize: none; min-height: 2.0em; vertical-align: middle; word-break: break-all; }
-    
-    input { height: 2.0em; }
-    input.day-input { text-align: center; width: 34px; font-family: monospace; font-weight: bold; padding: 2px 0; }
-    input.date-input { text-align: center; width: 75px; font-family: monospace; font-weight: bold; }
-    input.money-input { text-align: right; color: #80d8ff; width: 86px; font-family: monospace; font-weight: bold; letter-spacing: -0.5px; padding-right: 4px; font-size: 1.05em; }
     input.summary-input { text-align: right; color: #80d8ff; width: 120px; height: 2.5em; font-family: monospace; font-weight: bold; letter-spacing: -0.5px; padding-right: 6px; font-size: 1.3em; background: #333; border: 1px solid #555; border-radius: 4px; }
     @media screen and (max-width: 480px) { input.summary-input { width: 100%; font-size: 1.2em; } }
     
@@ -189,10 +161,7 @@
     .summary-area { display: flex; align-items: center; justify-content: space-around; background: #252525; padding: 10px 5px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #383838; }
     .summary-item { display: flex; align-items: center; }
     .summary-label { font-size: 1.1em; color: #ccc; margin-right: 10px; white-space: nowrap; }
-    table { width: 100%; border-collapse: separate; border-spacing: 0 8px; table-layout: fixed; font-size: 1em; }
-    th { color: #aaa; font-weight: normal; font-size: 0.9em; text-align: center; padding-bottom: 2px; }
-    td { vertical-align: top; padding: 0 1px; }
-    .col-date-annual { width: 75px; } .col-date-month { width: 55px; } .col-money { width: 86px; } .col-del { width: 30px; }
+    
     .add-block-area { text-align: center; margin-top: 30px; border-top: 1px dashed #444; padding-top: 20px; }
     .big-btn { background: #2e7d32; color: #fff; padding: 14px 24px; border: 1px solid #4caf50; border-radius: 5px; font-size: 1.1em; margin: 5px; width: 85%; }
     .hidden { display: none !important; }
@@ -200,12 +169,6 @@
     .total-val-box { background: #2a2a2a; border: 1px solid #444; border-radius: 3px; text-align: right; color: #fff; font-weight: bold; font-family: monospace; font-size: 1.05em; padding: 4px; height: 2.0em; display: flex; align-items: center; justify-content: flex-end; letter-spacing: -0.5px; }
     .total-label { text-align: center; font-weight: bold; color: #fff; background: transparent; border: none; font-size: 1.1em; }
 
-    @media screen and (max-width: 480px) {
-        .summary-area { flex-direction: column; align-items: flex-start; }
-        .summary-item { width: 100%; margin-bottom: 8px; }
-        .summary-label { margin-right: 0; margin-bottom: 2px; }
-    }
-    
     #sync-status { position:fixed; bottom:10px; right:10px; font-size:0.8em; color:#aaa; background:#222; padding:4px 8px; border-radius:4px; opacity:0.7; z-index:9999; }
 </style>
 </head>
@@ -303,7 +266,6 @@
 <div id="sync-status">同期待機中...</div>
 
 <script>
-    // ▼▼▼ Service Worker 強制削除 ▼▼▼
     if (window.navigator && navigator.serviceWorker) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
             for(let registration of registrations) { registration.unregister(); }
@@ -423,7 +385,6 @@
         openMemoEditor(newId);
     };
 
-    // ▼▼▼ メモ描画・並び替え機能追加 ▼▼▼
     window.renderMemoList = () => {
         const container = document.getElementById('memo-list-container');
         container.innerHTML = '';
@@ -443,25 +404,16 @@
             const btnGroup = document.createElement('div');
             btnGroup.className = 'memo-ctrl-btns';
 
-            // 編集ボタン
             const editBtn = document.createElement('button');
             editBtn.className = 'btn-edit-mode';
             editBtn.innerText = '✐ 編集';
             editBtn.onclick = (e) => { e.stopPropagation(); openMemoEditor(memo.id); };
 
-            // 並び替えボタン ↑
             const upBtn = document.createElement('button');
             upBtn.className = 'btn-icon';
             upBtn.innerText = '↑';
             upBtn.onclick = (e) => { e.stopPropagation(); moveMemo(memo.id, 'up'); };
             
-            // 並び替えボタン ↓
-            const downBtn = document.createElement('button');
-            downBtn.className = 'btn-icon';
-            downBtn.innerText = '↓';
-            downBtn.onclick = (e) => { e.stopPropagation(); moveMemo(memo.id, 'down'); };
-
-            // 開閉ボタン
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'btn-toggle-memo';
             toggleBtn.innerText = memo.isOpen ? '－' : '＋';
@@ -469,17 +421,14 @@
 
             btnGroup.appendChild(editBtn);
             btnGroup.appendChild(upBtn);
-            btnGroup.appendChild(downBtn);
             btnGroup.appendChild(toggleBtn);
-            
             header.appendChild(titleSpan);
             header.appendChild(btnGroup);
             div.appendChild(header);
 
-            // 本文表示（閉じていてもクラスで制御するため常に要素は作る）
             const body = document.createElement('div');
             body.className = 'memo-card-body';
-            if(!memo.isOpen) body.classList.add('collapsed'); // 閉じてる時はクラス追加
+            if(!memo.isOpen) body.classList.add('collapsed');
             body.innerText = memo.body; 
             div.appendChild(body);
 
@@ -487,27 +436,18 @@
         });
     };
 
-    // 並び替え処理
     window.moveMemo = (id, direction) => {
         const index = data.freeMemos.findIndex(m => m.id === id);
         if (index === -1) return;
-        
         if (direction === 'up' && index > 0) {
             [data.freeMemos[index], data.freeMemos[index - 1]] = [data.freeMemos[index - 1], data.freeMemos[index]];
-        } else if (direction === 'down' && index < data.freeMemos.length - 1) {
-            [data.freeMemos[index], data.freeMemos[index + 1]] = [data.freeMemos[index + 1], data.freeMemos[index]];
         }
-        saveData();
-        renderMemoList();
+        saveData(); renderMemoList();
     };
 
     window.toggleMemo = (id) => {
         const memo = data.freeMemos.find(m => m.id === id);
-        if(memo) {
-            memo.isOpen = !memo.isOpen;
-            saveData();
-            renderMemoList();
-        }
+        if(memo) { memo.isOpen = !memo.isOpen; saveData(); renderMemoList(); }
     };
 
     window.openMemoEditor = (id) => {
@@ -549,7 +489,6 @@
         renderMemoList();
     };
 
-    // 家計簿ロジック
     function renderKakeibo() {
         const yearSelect = document.getElementById('year-select');
         yearSelect.innerHTML = '';
@@ -571,40 +510,46 @@
         const cM=document.getElementById('content-annual-month'), bM=document.getElementById('btn-annual-month');
         if(yearData.isAnnualMonthOpen!==false){ cM.classList.remove('hidden'); bM.innerText="－"; } else { cM.classList.add('hidden'); bM.innerText="＋"; }
 
-        renderAnnualTable('annual-table-year', yearData.annualYear, 'annualYear', 'yearMode');
-        renderAnnualTable('annual-table-month', yearData.annualMonth, 'annualMonth', 'monthMode');
+        renderAnnualTable('annual-table-year', yearData.annualYear, 'annualYear');
+        renderAnnualTable('annual-table-month', yearData.annualMonth, 'annualMonth');
 
         const tabs=document.getElementById('month-tabs'); tabs.innerHTML='';
         for(let i=1; i<=12; i++){ 
             const d=document.createElement('div'); 
             d.className=`month-btn ${activeMonth===i?'active':''}`;
             d.innerText=i+"月"; 
-            d.onclick=()=>{ 
-                yearData.activeMonth = i; 
-                saveData(); 
-                renderKakeibo(); 
-            }; 
+            d.onclick=()=>{ yearData.activeMonth = i; saveData(); renderKakeibo(); }; 
             tabs.appendChild(d);
         }
         document.getElementById('monthly-header-title').innerText = `${activeMonth}月の収支`;
         renderMonthlyBlocks(yearData, activeMonth);
     }
 
-    function renderAnnualTable(cid, list, key, mode) {
+    function renderAnnualTable(cid, list, key) {
         const c=document.getElementById(cid); c.innerHTML='';
         const t=document.createElement('table');
-        if(mode==='yearMode') t.innerHTML=`<thead><tr><th class="col-date-annual">日付</th><th>内容</th><th class="col-money">金額</th><th class="col-del"></th></tr></thead>`;
-        else t.innerHTML=`<thead><tr><th class="col-date-month">日付</th><th>内容</th><th class="col-money">金額</th><th class="col-del"></th></tr></thead>`;
+        t.innerHTML=`<thead><tr><th class="col-date">日付</th><th>内容</th><th class="col-money">金額</th><th class="col-btn"></th><th class="col-btn"></th></tr></thead>`;
         const tb=document.createElement('tbody');
         if(!list) list = []; 
         list.forEach((item,idx)=>{
-            const tr=document.createElement('tr'); const tdD=document.createElement('td');
-            if(mode==='yearMode') tdD.appendChild(createInp(item.date, v=>updAnn(key,idx,'date',v), 'date'));
+            const tr=document.createElement('tr'); 
+            const tdD=document.createElement('td'); 
+            if(key==='annualYear') tdD.appendChild(createInp(item.date, v=>updAnn(key,idx,'date',v), 'date'));
             else { const w=document.createElement('div'); w.style.display="flex"; w.style.alignItems="center"; w.style.justifyContent="center"; w.append(createInp(item.date, v=>updAnn(key,idx,'date',v), 'day'), createSuf("日")); tdD.appendChild(w); }
+            
             const tdTx=document.createElement('td'); tdTx.appendChild(createTxt(item.text, v=>updAnn(key,idx,'text',v)));
             const tdC=document.createElement('td'); tdC.appendChild(createMon(item.cost, v=>updAnn(key,idx,'cost',v)));
-            const tdDel=document.createElement('td'); tdDel.innerHTML=`<button class="del-icon-btn" onclick="delAnn('${key}',${idx})">×</button>`;
-            tr.append(tdD,tdTx,tdC,tdDel); tb.appendChild(tr); setTimeout(()=>autoResize(tdTx.firstChild),0);
+            
+            // ↑ボタン（最上位は非表示）
+            const tdUp=document.createElement('td'); 
+            if(idx > 0) tdUp.innerHTML=`<button class="mini-btn btn-up" onclick="moveAnn('${key}',${idx},'up')">↑</button>`;
+            
+            // 削除ボタン
+            const tdDel=document.createElement('td'); 
+            tdDel.innerHTML=`<button class="mini-btn btn-del" onclick="delAnn('${key}',${idx})">×</button>`;
+            
+            tr.append(tdD,tdTx,tdC,tdUp,tdDel); 
+            tb.appendChild(tr); 
         });
         t.appendChild(tb); c.appendChild(t);
     }
@@ -622,27 +567,23 @@
             if(b.type==='standard') {
                 if(b.balance === undefined) b.balance = 0;
                 if(b.deposit === undefined) b.deposit = 0;
-                
                 const summaryDiv = document.createElement('div'); summaryDiv.className = 'summary-area';
                 const item1 = document.createElement('div'); item1.className = 'summary-item';
                 const label1 = document.createElement('div'); label1.className = 'summary-label'; label1.innerText = '残高';
                 item1.appendChild(label1);
-                const balInp = createMon(b.balance, v=>updBkVal(bi, 'balance', v, month), null, true);
-                item1.appendChild(balInp);
-
+                item1.appendChild(createMon(b.balance, v=>updBkVal(bi, 'balance', v, month), null, true));
                 const item2 = document.createElement('div'); item2.className = 'summary-item';
                 const label2 = document.createElement('div'); label2.className = 'summary-label'; label2.innerText = '入れる額';
                 item2.appendChild(label2);
-                const depInp = createMon(b.deposit, v=>updBkVal(bi, 'deposit', v, month), null, true);
-                item2.appendChild(depInp);
+                item2.appendChild(createMon(b.deposit, v=>updBkVal(bi, 'deposit', v, month), null, true));
                 summaryDiv.appendChild(item1); summaryDiv.appendChild(item2); contentDiv.appendChild(summaryDiv);
             }
 
             const t=document.createElement('table'); const tb=document.createElement('tbody');
             if(b.type==='standard') {
-                t.innerHTML=`<thead><tr><th class="col-date-month">日付</th><th>内容</th><th class="col-money">予定額</th><th class="col-money">確定額</th><th class="col-del"></th></tr></thead>`;
+                t.innerHTML=`<thead><tr><th class="col-date">日付</th><th>内容</th><th class="col-money">予定額</th><th class="col-money">確定額</th><th class="col-btn"></th><th class="col-btn"></th></tr></thead>`;
             } else {
-                t.innerHTML=`<thead><tr><th class="col-date-month">日付</th><th>重賞名</th><th class="col-money">入金</th><th class="col-money">払戻</th><th class="col-del"></th></tr></thead>`;
+                t.innerHTML=`<thead><tr><th class="col-date">日付</th><th>重賞名</th><th class="col-money">入金</th><th class="col-money">払戻</th><th class="col-btn"></th><th class="col-btn"></th></tr></thead>`;
             }
             const items = b.items || [];
             items.forEach((it,ii)=>{
@@ -651,6 +592,7 @@
                 w.append(createInp(it.date, v=>updIt(bi,ii,'date',v,month), 'day'), createSuf("日")); tdD.appendChild(w);
                 const tdN=document.createElement('td'); tdN.appendChild(createTxt(it.name, v=>updIt(bi,ii,'name',v,month)));
                 tr.append(tdD, tdN);
+                
                 if(b.type==='standard'){
                     const td1=document.createElement('td'); td1.appendChild(createMon(it.plan, v=>updIt(bi,ii,'plan',v,month), ()=>updateTotalDisplay(bi,month)));
                     const td2=document.createElement('td'); td2.appendChild(createMon(it.act, v=>updIt(bi,ii,'act',v,month), ()=>updateTotalDisplay(bi,month)));
@@ -660,18 +602,25 @@
                     const td2=document.createElement('td'); td2.appendChild(createMon(it.in, v=>updIt(bi,ii,'in',v,month), ()=>updateTotalDisplay(bi,month)));
                     tr.append(td1, td2);
                 }
-                const tdDel=document.createElement('td'); tdDel.innerHTML=`<button class="del-icon-btn" onclick="delIt(${bi},${ii},${month})">×</button>`;
-                tr.appendChild(tdDel); tb.appendChild(tr); setTimeout(()=>autoResize(tdN.firstChild),0);
+                
+                const tdUp=document.createElement('td'); 
+                if(ii > 0) tdUp.innerHTML=`<button class="mini-btn btn-up" onclick="moveIt(${bi},${ii},${month},'up')">↑</button>`;
+                
+                const tdDel=document.createElement('td'); 
+                tdDel.innerHTML=`<button class="mini-btn btn-del" onclick="delIt(${bi},${ii},${month})">×</button>`;
+                tr.append(tdUp, tdDel);
+
+                tb.appendChild(tr); 
             });
 
             const trTotal = document.createElement('tr'); trTotal.className = 'total-row';
             let s1=0, s2=0;
             if(b.type==='standard'){ 
                 items.forEach(i=>{s1+=Number(i.plan);s2+=Number(i.act)});
-                trTotal.innerHTML=`<td class="total-label">合計</td><td></td><td><div class="total-val-box" id="t1-${bi}">${formatNum(s1)}</div></td><td><div class="total-val-box" id="t2-${bi}">${formatNum(s2)}</div></td><td></td>`; 
+                trTotal.innerHTML=`<td class="total-label">合計</td><td></td><td><div class="total-val-box" id="t1-${bi}">${formatNum(s1)}</div></td><td><div class="total-val-box" id="t2-${bi}">${formatNum(s2)}</div></td><td colspan="2"></td>`; 
             } else { 
                 items.forEach(i=>{s1+=Number(i.out);s2+=Number(i.in)});
-                trTotal.innerHTML=`<td></td><td class="total-label">合計</td><td><div class="total-val-box" id="t1-${bi}">${formatNum(s1)}</div></td><td><div class="total-val-box" id="t2-${bi}">${formatNum(s2)}</div></td><td></td>`; 
+                trTotal.innerHTML=`<td></td><td class="total-label">合計</td><td><div class="total-val-box" id="t1-${bi}">${formatNum(s1)}</div></td><td><div class="total-val-box" id="t2-${bi}">${formatNum(s2)}</div></td><td colspan="2"></td>`; 
             }
             tb.appendChild(trTotal); t.appendChild(tb); contentDiv.appendChild(t); 
             const ab=document.createElement('button'); ab.className='add-row-btn'; ab.innerText='追加'; ab.onclick=()=>addIt(bi, month); 
@@ -749,18 +698,23 @@
         if (nums.length === 3) return parseInt(nums.slice(0,1)) + "/" + parseInt(nums.slice(1,3));
         return val;
     }
-    function autoResize(textarea) { textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px'; }
+    function autoResize(textarea) { /* 横スクロールのみなので高さ調整不要 */ }
     function formatNum(num) { return num ? Number(num).toLocaleString() : "0"; }
 
-    // 固定費追加バグ対応
     window.addAnnualItem = (k) => {
         const l = (k === 'year' || k === 'annualYear') ? 'annualYear' : 'annualMonth';
-        if (!data.years[data.currentYear][l]) {
-            data.years[data.currentYear][l] = [];
-        }
+        if (!data.years[data.currentYear][l]) { data.years[data.currentYear][l] = []; }
         data.years[data.currentYear][l].push({ date: "", text: "", cost: 0 });
-        saveData(true);
-        renderKakeibo();
+        saveData(true); renderKakeibo();
+    };
+    
+    window.moveAnn = (key, idx, dir) => {
+        const list = data.years[data.currentYear][key];
+        if(!list) return;
+        if(dir === 'up' && idx > 0) {
+            [list[idx], list[idx-1]] = [list[idx-1], list[idx]];
+        }
+        saveData(true); renderKakeibo();
     };
 
     window.updAnn=(l,i,k,v)=>{data.years[data.currentYear][l][i][k]=v;saveData(true)};
@@ -785,6 +739,15 @@
         saveData();renderKakeibo();
     };
     
+    window.moveIt = (bIdx, iIdx, m, dir) => {
+        const list = data.years[data.currentYear].months[m][bIdx].items;
+        if(!list) return;
+        if(dir === 'up' && iIdx > 0) {
+            [list[iIdx], list[iIdx-1]] = [list[iIdx-1], list[iIdx]];
+        }
+        saveData(); renderKakeibo();
+    };
+
     window.updIt=(b,i,k,v, m)=>{data.years[data.currentYear].months[m][b].items[i][k]=v;saveData()};
     window.delIt=(b,i, m)=>{data.years[data.currentYear].months[m][b].items.splice(i,1);saveData();renderKakeibo()};
     
