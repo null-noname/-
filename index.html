@@ -10,7 +10,7 @@
 
 <style>
     /* ----------------------------------------------------
-       デザインスタイル (V7.05 固定費追加バグ修正版)
+       デザインスタイル (V7.06 並び替え＆チラ見せ機能版)
        ---------------------------------------------------- */
     body { 
         font-family: sans-serif; margin: 0; padding: 0; 
@@ -51,62 +51,109 @@
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* --- メモ帳スタイル --- */
+    /* --- ▼▼▼ メモ帳スタイル (V7.06) ▼▼▼ --- */
+    
     .memo-card {
         background: #202020; border: 1px solid #333; border-radius: 8px;
-        padding: 10px 15px; margin-bottom: 15px;
+        padding: 12px 15px; margin-bottom: 15px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        transition: all 0.2s ease;
     }
+    
     .memo-card-header {
         display: flex; justify-content: space-between; align-items: center;
-        padding-bottom: 5px;
+        margin-bottom: 5px;
     }
+    
     .memo-card-title { 
         font-weight: bold; color: #81c784; font-size: 1.2em; 
-        flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 10px;
+        flex: 1; 
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        margin-right: 8px;
     }
-    .memo-ctrl-btns { display: flex; gap: 8px; align-items: center; }
+    
+    .memo-ctrl-btns {
+        display: flex; gap: 5px; align-items: center;
+    }
+
+    /* 各種ボタン */
+    .btn-icon {
+        background: #333; color: #aaa; 
+        border: 1px solid #555; border-radius: 4px;
+        width: 32px; height: 32px; 
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2em; cursor: pointer;
+    }
     .btn-edit-mode {
-        background: #333; color: #fff; border: 1px solid #555; border-radius: 4px;
-        padding: 6px 10px; font-size: 0.85em; cursor: pointer;
+        background: #333; color: #fff; 
+        border: 1px solid #555; border-radius: 4px;
+        padding: 0 12px; height: 32px;
+        font-size: 0.9em; cursor: pointer; display: flex; align-items: center;
     }
     .btn-toggle-memo {
-        background: #1b5e20; color: #fff; border: 1px solid #4caf50; border-radius: 4px;
-        width: 30px; height: 30px; font-weight: bold; font-size: 1.1em;
+        background: #1b5e20; color: #fff;
+        border: 1px solid #4caf50; border-radius: 4px;
+        width: 32px; height: 32px;
+        font-weight: bold; font-size: 1.2em;
         display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
+
+    /* メモ本文の表示エリア */
     .memo-card-body {
         font-family: 'Consolas', 'Monaco', monospace; 
         color: #e0e0e0; font-size: 1.05em; 
-        line-height: 1.6; white-space: pre-wrap; word-break: break-all;
-        border-top: 1px dashed #444; margin-top: 10px; padding-top: 10px;
-        animation: fadeIn 0.2s ease;
+        line-height: 1.5;
+        white-space: pre-wrap; 
+        word-break: break-all;
+        border-top: 1px dashed #444; 
+        margin-top: 8px; padding-top: 8px;
+    }
+
+    /* ▼▼▼ チラ見せ機能（閉じた時のスタイル） ▼▼▼ */
+    .memo-card-body.collapsed {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* 2行制限 */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: #888; /* 少し暗くする */
+        font-size: 0.95em;
+        border-top: none; /* 閉じてる時は線なし */
     }
 
     /* 編集モード */
     #memo-editor { 
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        display: none; 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: #121212; z-index: 2000;
-        padding-top: env(safe-area-inset-top); flex-direction: column;
+        padding-top: env(safe-area-inset-top);
+        flex-direction: column;
     }
     #memo-editor.active { display: flex; }
+
     .editor-toolbar { 
         display: flex; justify-content: space-between; align-items: center;
         padding: 10px 15px; background: #202020; border-bottom: 1px solid #333;
     }
+    
     input.memo-title-input { 
         width: 100%; background: transparent; border: none;
         color: #fff; font-size: 1.2em; font-weight: bold;
-        padding: 10px 15px; border-bottom: 1px solid #333; outline: none;
+        padding: 10px 15px; border-bottom: 1px solid #333;
+        outline: none;
     }
+    
     textarea.memo-body { 
-        flex: 1; width: 100%; background: #272727; color: #f0f0f0; 
-        border: none; padding: 15px; font-size: 16px; line-height: 1.6; 
+        flex: 1; width: 100%; 
+        background: #272727; color: #f0f0f0; 
+        border: none; padding: 15px; 
+        font-size: 16px; 
+        line-height: 1.6; 
         font-family: 'Consolas', 'Monaco', monospace;
-        resize: none; outline: none; box-sizing: border-box;
+        resize: none; outline: none;
+        box-sizing: border-box;
     }
 
-    /* --- 家計簿スタイル --- */
+    /* --- 以下、共通スタイル --- */
     h2 { font-size: 1.2em; border-left: 6px solid #2e7d32; padding-left: 10px; margin: 20px 0 10px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
     .btn-green { background: #2e7d32; color: #fff; border: 1px solid #4caf50; border-radius: 4px; padding: 8px 14px; font-size: 1em; }
     .btn-red { background: #c62828; color: #fff; border: 1px solid #e57373; border-radius: 4px; padding: 6px 12px; font-size: 0.9em; }
@@ -165,7 +212,7 @@
 <body>
 
 <div class="header-area">
-    <div class="app-title-bar">家計簿 V7.05</div>
+    <div class="app-title-bar">家計簿</div>
     <div class="top-tabs">
         <div class="tab-item" onclick="switchView('memo')" id="tab-memo">📝 メモ</div>
         <div class="tab-item" onclick="switchView('fixed')" id="tab-fixed">🏢 固定費</div>
@@ -371,17 +418,16 @@
 
     window.addNewMemo = () => {
         const newId = Date.now().toString();
-        // 新規作成時は開いた状態(true)にする
         data.freeMemos.push({ id: newId, title: "新規メモ", body: "", isOpen: true });
         saveData();
         openMemoEditor(newId);
     };
 
-    // メモ描画
+    // ▼▼▼ メモ描画・並び替え機能追加 ▼▼▼
     window.renderMemoList = () => {
         const container = document.getElementById('memo-list-container');
         container.innerHTML = '';
-        data.freeMemos.forEach(memo => {
+        data.freeMemos.forEach((memo, index) => {
             if(memo.isOpen === undefined) memo.isOpen = true; 
 
             const div = document.createElement('div');
@@ -397,33 +443,62 @@
             const btnGroup = document.createElement('div');
             btnGroup.className = 'memo-ctrl-btns';
 
+            // 編集ボタン
             const editBtn = document.createElement('button');
             editBtn.className = 'btn-edit-mode';
             editBtn.innerText = '✐ 編集';
             editBtn.onclick = (e) => { e.stopPropagation(); openMemoEditor(memo.id); };
 
+            // 並び替えボタン ↑
+            const upBtn = document.createElement('button');
+            upBtn.className = 'btn-icon';
+            upBtn.innerText = '↑';
+            upBtn.onclick = (e) => { e.stopPropagation(); moveMemo(memo.id, 'up'); };
+            
+            // 並び替えボタン ↓
+            const downBtn = document.createElement('button');
+            downBtn.className = 'btn-icon';
+            downBtn.innerText = '↓';
+            downBtn.onclick = (e) => { e.stopPropagation(); moveMemo(memo.id, 'down'); };
+
+            // 開閉ボタン
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'btn-toggle-memo';
             toggleBtn.innerText = memo.isOpen ? '－' : '＋';
-            toggleBtn.onclick = (e) => { 
-                e.stopPropagation(); 
-                toggleMemo(memo.id); 
-            };
+            toggleBtn.onclick = (e) => { e.stopPropagation(); toggleMemo(memo.id); };
 
             btnGroup.appendChild(editBtn);
+            btnGroup.appendChild(upBtn);
+            btnGroup.appendChild(downBtn);
             btnGroup.appendChild(toggleBtn);
+            
             header.appendChild(titleSpan);
             header.appendChild(btnGroup);
             div.appendChild(header);
 
-            if(memo.isOpen) {
-                const body = document.createElement('div');
-                body.className = 'memo-card-body';
-                body.innerText = memo.body; 
-                div.appendChild(body);
-            }
+            // 本文表示（閉じていてもクラスで制御するため常に要素は作る）
+            const body = document.createElement('div');
+            body.className = 'memo-card-body';
+            if(!memo.isOpen) body.classList.add('collapsed'); // 閉じてる時はクラス追加
+            body.innerText = memo.body; 
+            div.appendChild(body);
+
             container.appendChild(div);
         });
+    };
+
+    // 並び替え処理
+    window.moveMemo = (id, direction) => {
+        const index = data.freeMemos.findIndex(m => m.id === id);
+        if (index === -1) return;
+        
+        if (direction === 'up' && index > 0) {
+            [data.freeMemos[index], data.freeMemos[index - 1]] = [data.freeMemos[index - 1], data.freeMemos[index]];
+        } else if (direction === 'down' && index < data.freeMemos.length - 1) {
+            [data.freeMemos[index], data.freeMemos[index + 1]] = [data.freeMemos[index + 1], data.freeMemos[index]];
+        }
+        saveData();
+        renderMemoList();
     };
 
     window.toggleMemo = (id) => {
@@ -474,6 +549,7 @@
         renderMemoList();
     };
 
+    // 家計簿ロジック
     function renderKakeibo() {
         const yearSelect = document.getElementById('year-select');
         yearSelect.innerHTML = '';
@@ -676,10 +752,9 @@
     function autoResize(textarea) { textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px'; }
     function formatNum(num) { return num ? Number(num).toLocaleString() : "0"; }
 
-    // ▼▼▼ 修正点：固定費追加バグ対応 ▼▼▼
+    // 固定費追加バグ対応
     window.addAnnualItem = (k) => {
         const l = (k === 'year' || k === 'annualYear') ? 'annualYear' : 'annualMonth';
-        // 配列がない場合は作成する安全装置を追加
         if (!data.years[data.currentYear][l]) {
             data.years[data.currentYear][l] = [];
         }
@@ -687,7 +762,6 @@
         saveData(true);
         renderKakeibo();
     };
-    // ▲▲▲ 修正終わり ▲▲▲
 
     window.updAnn=(l,i,k,v)=>{data.years[data.currentYear][l][i][k]=v;saveData(true)};
     window.delAnn=(l,i)=>{data.years[data.currentYear][l].splice(i,1);saveData(true);renderKakeibo()};
