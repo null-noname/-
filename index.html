@@ -21,7 +21,7 @@
         user-select: none; 
     }
 
-    /* ログイン画面 (V8追加) */
+    /* ログイン画面 */
     #login-screen {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: #121212; z-index: 3000;
@@ -198,7 +198,7 @@
 
 <div id="main-app" style="display:none;">
     <div class="header-area">
-        <div class="app-title-bar">家計簿 (V8.06)</div>
+        <div class="app-title-bar">家計簿</div>
         <div class="top-tabs">
             <div class="tab-item" onclick="switchView('memo')" id="tab-memo">📝 メモ</div>
             <div class="tab-item" onclick="switchView('fixed')" id="tab-fixed">🏢 固定費</div>
@@ -287,14 +287,16 @@
 <div id="sync-status">同期待機中...</div>
 
 <script>
-    // --- Service Worker Cleanup (V7.09準拠) ---
+    // kakeibo_V8.07
+    
+    // --- Service Worker Cleanup ---
     if (window.navigator && navigator.serviceWorker) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
             for(let registration of registrations) { registration.unregister(); }
         });
     }
 
-    // --- Firebase設定 (V8統合版) ---
+    // --- Firebase設定 ---
     const firebaseConfig = {
         apiKey: "AIzaSyCT_VvEPzGCPRLLFnzQuwArsYn2JnUR_fg",
         authDomain: "kakeibo-app-92bb4.firebaseapp.com",
@@ -321,7 +323,16 @@
     let isDataLoaded = false;
     let editingMemoId = null;
 
-    // --- ログイン処理ロジック ---
+    // --- ログイン処理ロジック (V8.07) ---
+    auth.getRedirectResult().then((result) => {
+        if (result && result.user) {
+            console.log("Redirect Login Success");
+        }
+    }).catch((error) => {
+        console.error("Redirect Login Error:", error);
+        document.getElementById('sync-status').innerText = "⚠ ログインエラー";
+    });
+
     auth.onAuthStateChanged((user) => {
         const loginScr = document.getElementById('login-screen');
         const mainApp = document.getElementById('main-app');
@@ -333,6 +344,7 @@
         } else {
             loginScr.style.display = 'flex';
             mainApp.style.display = 'none';
+            document.getElementById('sync-status').innerText = "ログイン待機中";
         }
     });
 
@@ -384,7 +396,7 @@
         });
     }
 
-    // --- 保存ロジック (V7.09 完全準拠) ---
+    // --- 保存ロジック ---
     function saveData(syncAnnual = false) {
         if(!isDataLoaded || !dbRef) return;
         if(syncAnnual) {
@@ -439,7 +451,7 @@
         if(isDataLoaded) saveData();
     };
 
-    // --- メモ帳ロジック (V7.09 完全準拠) ---
+    // --- メモ帳ロジック ---
     window.addNewMemo = () => {
         const newId = Date.now().toString();
         data.freeMemos.push({ id: newId, title: "新規メモ", body: "", isOpen: true });
@@ -549,7 +561,7 @@
         renderMemoList();
     };
 
-    // --- 家計簿/固定費描画ロジック (V7.09 完全準拠) ---
+    // --- 家計簿/固定費描画ロジック ---
     function renderKakeibo() {
         const yearSelect = document.getElementById('year-select');
         if(!yearSelect) return;
@@ -673,7 +685,7 @@
         });
     }
 
-    // --- 各種パーツ生成ヘルパー (V7.09 完全準拠) ---
+    // --- 各種パーツ生成ヘルパー ---
     function createMonTd(v, cb, bi, m) { const td = document.createElement('td'); td.appendChild(createMon(v, cb, ()=>updateTotalDisplay(bi,m))); return td; }
     function updateTotalDisplay(bIdx, month) {
         const block = data.years[data.currentYear].months[month][bIdx];
