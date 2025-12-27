@@ -1,0 +1,223 @@
+/* --- 収支画面 統合CSS --- */
+
+/* ナビゲーション（年選択・月タブ） */
+.year-controls {
+    background: #1f1f1f;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+select {
+    font-size: 1.1em;
+    padding: 5px 12px;
+    background: #333;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 6px;
+}
+
+.month-selector {
+    display: flex;
+    overflow-x: auto;
+    background: #000;
+    margin-bottom: 15px;
+    border: 1px solid #333;
+    padding: 2px 0;
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.month-selector::-webkit-scrollbar {
+    display: none;
+}
+
+/* Chrome/Safari */
+
+.month-btn {
+    flex: 0 0 auto;
+    padding: 12px 16px;
+    color: #888;
+    border-right: 1px solid #222;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.month-btn.active {
+    background: var(--accent);
+    color: #fff;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+/* メイン見出し */
+h2#monthly-header-title {
+    font-size: 1.3em;
+    margin: 10px 0;
+    color: var(--accent);
+    text-align: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #333;
+}
+
+/* サマリー（集計）エリア */
+.summary-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1e1e1e;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    gap: 8px;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.summary-label {
+    font-size: 0.75em;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.summary-input,
+.total-val-box {
+    text-align: center;
+    color: #80d8ff;
+    width: 100%;
+    height: 2.2em;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+    font-size: 1.05em;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    /* 枠線を明示 */
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.total-val-box {
+    color: #fff;
+}
+
+/* カテゴリーブロック */
+.category-block {
+    background: #181818;
+    padding: 12px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    background: #252525;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+/* テーブルレイアウト */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    table-layout: fixed;
+}
+
+th {
+    color: #888;
+    font-weight: normal;
+    font-size: 0.8em;
+    padding-bottom: 4px;
+    text-align: center;
+}
+
+/* 列幅の調整 */
+.col-date {
+    width: 42px;
+}
+
+/* "31" が余裕をもって入る幅 */
+.col-money {
+    width: 95px;
+}
+
+/* "-999,999" が入る幅 */
+.col-btns {
+    width: 55px;
+}
+
+/* ▲×ボタン用 */
+
+td {
+    vertical-align: middle;
+}
+
+/* 入力要素のスタイル */
+input,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #444;
+    /* 全ての入力に枠線を適用 */
+    background: #2a2a2a;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+    padding: 4px 2px;
+    font-size: 0.95em;
+}
+
+input.money-input {
+    color: #80d8ff;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: bold;
+}
+
+textarea.kakeibo-text {
+    resize: none;
+    line-height: 1.25;
+    word-break: break-all;
+    white-space: pre-wrap;
+    min-height: 1.5em;
+    font-family: sans-serif;
+    display: block;
+}
+
+/* フッター（追加ボタン周り） */
+.add-block-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    padding-bottom: 50px;
+}
+
+.big-btn {
+    background: #333;
+    color: var(--accent);
+    padding: 14px;
+    border: 1px dashed #555;
+    border-radius: 10px;
+    font-size: 1.0em;
+    font-weight: bold;
+    width: 90%;
+    cursor: pointer;
+}
