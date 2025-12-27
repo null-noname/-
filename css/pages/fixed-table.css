@@ -1,0 +1,48 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+}
+
+th,
+td {
+    padding: 4px;
+    border: 1px solid #333;
+    text-align: left;
+}
+
+th {
+    background: #333;
+    font-size: 0.8em;
+}
+
+.date-input,
+.money-input,
+.kakeibo-text {
+    width: 100%;
+    background: transparent;
+    color: #fff;
+    border: none;
+    outline: none;
+    font-size: 0.9em;
+}
+
+.kakeibo-text {
+    resize: none;
+    overflow: hidden;
+    min-height: 1.2em;
+}
+
+.col-date {
+    width: 50px;
+}
+
+.col-money {
+    width: 80px;
+    text-align: right;
+}
+
+.col-btn {
+    width: 30px;
+    text-align: center;
+}

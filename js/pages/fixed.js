@@ -1,23 +1,14 @@
-import { state, saveDB } from '../services/db.js';
+import { state } from '../services/db.js';
 import { renderFixed } from './fixed-render.js';
+import { setupToggle, setupAdd } from './fixed-actions.js';
 
 export function init() {
     render();
     const yd = state.years[state.currentYear];
-    const tog = (k, id) => {
-        const btn = document.getElementById(`btn-annual-${id}`);
-        btn.onclick = () => {
-            yd[`isAnnual${k}Open`] = !yd[`isAnnual${k}Open`];
-            saveDB({}); render();
-        };
-    };
-    tog('Year', 'year'); tog('Month', 'month');
-    const add = (id, k) => {
-        document.getElementById(`btn-add-${id}`).onclick = () => {
-            yd[k].push({ date: "", text: "", cost: 0 });
-            saveDB({}); render();
-        };
-    };
-    add('year', 'annualYear'); add('month', 'annualMonth');
+    setupToggle(yd, 'Year', 'year', render);
+    setupToggle(yd, 'Month', 'month', render);
+    setupAdd(yd, 'year', 'annualYear', render);
+    setupAdd(yd, 'month', 'annualMonth', render);
 }
+
 function render() { renderFixed(state, render); }

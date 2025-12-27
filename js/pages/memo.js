@@ -1,46 +1,26 @@
-import { state, saveDB } from '../services/db.js';
+import { state } from '../services/db.js';
 import { renderMemoList } from './memo-render.js';
+import * as Store from './memo-store.js';
+import * as UI from './memo-view-toggle.js';
 
 let editId = null;
+const getEl = id => document.getElementById(id);
+
 export function init() {
     render();
-    document.getElementById('btn-memo-add').onclick = () => {
-        editId = Date.now().toString();
-        state.freeMemos.push({ id: editId, title: "新規メモ", body: "", isOpen: true });
-        saveDB({}); openEditor();
-    };
-    document.getElementById('btn-memo-back').onclick = closeEditor;
-    document.getElementById('btn-memo-del').onclick = () => {
-        if (confirm("削除?")) {
-            state.freeMemos = state.freeMemos.filter(m => m.id !== editId);
-            saveDB({}); closeEditor();
-        }
-    };
-    const save = () => {
-        const m = state.freeMemos.find(m => m.id === editId);
-        if (m) {
-            m.title = document.getElementById('memo-edit-title').value;
-            m.body = document.getElementById('memo-edit-body').value;
-            saveDB({});
-        }
-    };
-    document.getElementById('memo-edit-title').onblur = save;
-    document.getElementById('memo-edit-body').onblur = save;
+    getEl('btn-memo-add').onclick = () => openEditor(Store.addMemo());
+    getEl('btn-memo-back').onclick = () => { UI.toggleEditor(false); render(); };
+    getEl('btn-memo-del').onclick = () => Store.deleteMemo(editId) && UI.toggleEditor(false) || render();
+    const save = () => Store.updateMemo(editId, getEl('memo-edit-title').value, getEl('memo-edit-body').value);
+    getEl('memo-edit-title').onblur = save;
+    getEl('memo-edit-body').onblur = save;
 }
 
 export function openEditor(id) {
-    if (id) editId = id;
-    const m = state.freeMemos.find(m => m.id === editId);
-    document.getElementById('memo-edit-title').value = m.title;
-    document.getElementById('memo-edit-body').value = m.body;
-    document.getElementById('memo-list-view').classList.add('hidden');
-    document.getElementById('memo-editor').classList.remove('hidden');
-}
-
-function closeEditor() {
-    document.getElementById('memo-editor').classList.add('hidden');
-    document.getElementById('memo-list-view').classList.remove('hidden');
-    render();
+    editId = id;
+    const m = state.freeMemos.find(m => m.id === id);
+    UI.setEditorValues(m.title, m.body);
+    UI.toggleEditor(true);
 }
 
 function render() { renderMemoList(state, render, openEditor); }

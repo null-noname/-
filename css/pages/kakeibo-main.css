@@ -1,0 +1,27 @@
+.big-btn {
+    background: #2e7d32;
+    color: #fff;
+    padding: 14px 24px;
+    border: 1px solid #4caf50;
+    border-radius: 5px;
+    font-size: 1.1em;
+    margin: 5px;
+    width: 85%;
+    cursor: pointer;
+}
+
+.add-block-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    padding-bottom: 40px;
+}
+
+h2#monthly-header-title {
+    font-size: 1.3em;
+    margin: 10px 0;
+    color: #81c784;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
