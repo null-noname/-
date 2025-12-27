@@ -3,15 +3,14 @@
 .memo-card {
     background: #202020;
     border: 1px solid #333;
-    border-radius: 8px;
-    padding: 12px 15px;
+    border-radius: 10px;
+    padding: 15px;
     margin-bottom: 15px;
 }
 
 .memo-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .memo-card-title {
@@ -23,18 +22,15 @@
     white-space: nowrap;
 }
 
-.memo-ctrl-btns {
-    display: flex;
-    gap: 5px;
-}
-
 .memo-card-body {
     font-family: monospace;
+    font-size: 1.1em;
     color: #e0e0e0;
-    margin-top: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
     border-top: 1px dashed #444;
-    padding-top: 8px;
     white-space: pre-wrap;
+    display: block;
 }
 
 .memo-card-body.collapsed {
@@ -44,4 +40,5 @@
     overflow: hidden;
     color: #888;
     border-top: none;
+    padding-top: 0;
 }

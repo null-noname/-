@@ -10,34 +10,32 @@
     flex-direction: column;
 }
 
-.memo-title-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 15px;
-    border-bottom: 1px solid #333;
-    outline: none;
-}
-
-.memo-body {
-    flex: 1;
-    background: #272727;
-    color: #f0f0f0;
-    border: none;
-    padding: 15px;
-    font-size: 1em;
-    font-family: monospace;
-    resize: none;
-    outline: none;
-}
-
 .editor-toolbar {
     display: flex;
     justify-content: space-between;
     padding: 10px;
     background: #202020;
+}
+
+.memo-title-input {
+    width: 100%;
+    background: #222;
+    border: none;
+    color: #fff;
+    font-size: 1.4em;
+    font-weight: bold;
+    padding: 15px;
     border-bottom: 1px solid #333;
+}
+
+.memo-body {
+    flex: 1;
+    background: #1a1a1a;
+    color: #f0f0f0;
+    border: none;
+    padding: 20px;
+    font-size: 1.25em;
+    font-family: monospace;
+    resize: none;
+    line-height: 1.5;
 }

@@ -13,6 +13,26 @@ th {
     text-align: center;
 }
 
+.col-date {
+    width: 35px;
+}
+
+.col-money {
+    width: 85px;
+}
+
+.col-btns {
+    width: 50px;
+    text-align: center;
+}
+
+td.col-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
 input,
 textarea {
     box-sizing: border-box;
@@ -20,4 +40,5 @@ textarea {
     background: #2a2a2a;
     border-radius: 3px;
     color: #fff;
+    text-align: center;
 }

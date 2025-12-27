@@ -1,17 +1,19 @@
-input.day-input {
+input,
+textarea {
+    box-sizing: border-box;
+    border: 1px solid #444;
+    background: #2a2a2a;
+    border-radius: 3px;
+    color: #fff;
     text-align: center;
-    width: 100%;
-    font-family: monospace;
-    font-weight: bold;
 }
 
 input.money-input {
-    text-align: right;
+    text-align: center;
     color: #80d8ff;
     width: 100%;
     font-family: monospace;
     font-weight: bold;
-    letter-spacing: -0.5px;
 }
 
 textarea.kakeibo-text {
@@ -23,14 +25,5 @@ textarea.kakeibo-text {
     word-break: break-all;
     white-space: pre-wrap;
     min-height: 1.2em;
-}
-
-.no-border-block input,
-.no-border-block textarea {
-    border: none !important;
-    background: transparent !important;
-}
-
-.btn-del {
-    color: #f44336 !important;
+    text-align: center;
 }

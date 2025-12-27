@@ -7,45 +7,42 @@ table {
 th,
 td {
     padding: 6px 4px;
-    border: none;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #444;
 }
 
 th {
-    background: transparent;
     color: #aaa;
     font-size: 0.85em;
     text-align: center;
     font-weight: normal;
 }
 
-.date-input,
-.money-input,
-.kakeibo-text {
-    width: 100%;
-    background: transparent;
+input,
+textarea {
+    box-sizing: border-box;
+    border: 1px solid #444;
+    background: #2a2a2a;
+    border-radius: 3px;
     color: #fff;
-    border: none;
-    outline: none;
-    font-size: 0.9em;
-}
-
-.kakeibo-text {
-    resize: none;
-    overflow: hidden;
-    min-height: 1.2em;
+    text-align: center;
 }
 
 .col-date {
-    width: 50px;
+    width: 35px;
 }
 
 .col-money {
     width: 80px;
-    text-align: right;
 }
 
-.col-btn {
-    width: 30px;
+.col-btns {
+    width: 50px;
     text-align: center;
+}
+
+td.col-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
 }
