@@ -149,19 +149,17 @@ th {
     text-align: center;
 }
 
-/* 列幅の調整 */
+/* 列幅の調整（黄金比） */
 .col-date {
-    width: 42px;
+    width: 36px;
 }
 
-/* "31" が余裕をもって入る幅 */
 .col-money {
-    width: 95px;
+    width: 85px;
 }
 
-/* "-999,999" が入る幅 */
 .col-btns {
-    width: 55px;
+    width: 52px;
 }
 
 /* ▲×ボタン用 */
@@ -176,13 +174,15 @@ textarea {
     width: 100%;
     box-sizing: border-box;
     border: 1px solid #444;
-    /* 全ての入力に枠線を適用 */
     background: #2a2a2a;
     border-radius: 4px;
     color: #fff;
     text-align: center;
-    padding: 4px 2px;
+    padding: 2px 1px;
+    /* 枠内に収めるため極限まで詰める */
     font-size: 0.95em;
+    height: 1.8em;
+    /* 高さを揃える */
 }
 
 input.money-input {
@@ -193,10 +193,14 @@ input.money-input {
 
 textarea.kakeibo-text {
     resize: none;
-    line-height: 1.25;
-    word-break: break-all;
-    white-space: pre-wrap;
-    min-height: 1.5em;
+    line-height: 1.6;
+    word-break: keep-all;
+    white-space: nowrap;
+    /* 改行を禁止 */
+    overflow: hidden;
+    /* はみ出しを隠す */
+    text-overflow: ellipsis;
+    /* 必要なら三点リーダー */
     font-family: sans-serif;
     display: block;
 }

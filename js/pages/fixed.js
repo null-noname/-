@@ -104,7 +104,7 @@ function render() {
                 }
             };
             bts[1].onclick = () => {
-                if (confirm("削除?")) {
+                if (confirm("本当に削除しますか？")) {
                     list.splice(idx, 1);
                     saveDB({}); render();
                 }

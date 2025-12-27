@@ -43,15 +43,15 @@ function render() {
     const m = yd.activeMonth || 1;
 
     sel.innerHTML = Object.keys(data.years).sort().map(y => `<option value="${y}" ${y == data.currentYear ? 'selected' : ''}>${y}年</option>`).join('');
-    
+
     const tabs = document.getElementById('month-tabs');
     tabs.innerHTML = [...Array(12)].map((_, i) => `<div class="month-btn ${m == i + 1 ? 'active' : ''}">${i + 1}月</div>`).join('');
-    [...tabs.children].forEach((b, i) => { 
+    [...tabs.children].forEach((b, i) => {
         b.onclick = () => { yd.activeMonth = i + 1; saveDB({}); render(); };
     });
 
     document.getElementById('monthly-header-title').innerText = `${m}月の収支`;
-    
+
     const container = document.getElementById('monthly-container');
     container.innerHTML = '';
     (yd.months[m] || []).forEach((b, bi) => {
@@ -62,10 +62,10 @@ function render() {
                 <input class="cat-title-input" value="${b.title}">
                 <button class="btn-toggle">${b.isOpen ? '－' : '＋'}</button>
             </div>`;
-        
+
         const headerInput = div.querySelector('.cat-title-input');
         headerInput.onchange = (e) => { b.title = e.target.value; saveDB({}); };
-        
+
         const toggleBtn = div.querySelector('.btn-toggle');
         toggleBtn.onclick = () => { b.isOpen = !b.isOpen; saveDB({}); render(); };
 
@@ -101,7 +101,7 @@ function renderBlockItems(parent, b, bi, m) {
         `<tr><th class="col-date">日</th><th class="col-text">内容</th><th class="col-money">予定</th><th class="col-money">確定</th><th class="col-btns"></th></tr>` :
         `<tr><th class="col-date">日</th><th class="col-text">重賞名</th><th class="col-money">入金</th><th class="col-money">払戻</th><th class="col-btns"></th></tr>`;
     table.innerHTML = `<thead>${h}</thead>`;
-    
+
     const tbody = document.createElement('tbody');
     let sum1 = 0, sum2 = 0;
 
@@ -112,29 +112,29 @@ function renderBlockItems(parent, b, bi, m) {
         sum1 += v1; sum2 += v2;
 
         tr.innerHTML = `
-            <td class="col-date"><input class="day-input" value="${it.date || ''}" type="tel"></td>
+            <td class="col-date"><input class="day-input" value="${it.date || ''}" type="tel" maxlength="2" placeholder="日"></td>
             <td class="col-text"><textarea class="kakeibo-text">${it.name || ''}</textarea></td>
             <td class="col-money"><input class="money-input" value="${formatNum(v1)}" type="tel"></td>
             <td class="col-money"><input class="money-input" value="${formatNum(v2)}" type="tel"></td>
             <td class="col-btns"><button class="mini-btn">▲</button><button class="mini-btn btn-del">×</button></td>`;
-        
+
         const ins = tr.querySelectorAll('input, textarea');
         ins[0].onblur = (e) => { it.date = e.target.value; saveDB({}); };
         ins[1].oninput = (e) => autoHeight(e.target);
         ins[1].onblur = (e) => { it.name = e.target.value; saveDB({}); };
-        
+
         const setVal = (idx, k) => {
             ins[idx].onfocus = (e) => e.target.value = it[k] ?? 0;
-            ins[idx].onblur = (e) => { 
+            ins[idx].onblur = (e) => {
                 const val = parseNum(e.target.value);
                 it[k] = val;
                 // 古いキーを削除してクリーンアップ
                 delete it.plan; delete it.out; delete it.act; delete it.in;
-                saveDB({}); render(); 
+                saveDB({}); render();
             };
         };
         setVal(2, 'v1'); setVal(3, 'v2');
-        
+
         const bts = tr.querySelectorAll('button');
         bts[0].onclick = () => {
             if (ii > 0) {
@@ -143,12 +143,12 @@ function renderBlockItems(parent, b, bi, m) {
             }
         };
         bts[1].onclick = () => {
-            if (confirm("削除?")) {
+            if (confirm("本当に削除しますか？")) {
                 b.items.splice(ii, 1);
                 saveDB({}); render();
             }
         };
-        
+
         setTimeout(() => autoHeight(ins[1]), 0);
         tbody.appendChild(tr);
     });
@@ -164,7 +164,7 @@ function renderBlockItems(parent, b, bi, m) {
     parent.appendChild(table);
 
     const addBtn = document.createElement('button');
-    addBtn.className = 'add-row-btn';
+    addBtn.className = 'big-btn btn-green add-row-btn';
     addBtn.innerText = '＋ 行を追加';
     addBtn.onclick = () => {
         b.items.push({ date: "", name: "", v1: 0, v2: 0 });

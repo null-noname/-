@@ -5,14 +5,15 @@
     padding: 10px;
 }
 
-/* 「＋新しいメモを追加」ボタンのサイズ復元 */
+/* 「＋新しいメモを追加」ボタンのサイズとデザイン復元 */
 button#btn-memo-add {
     width: 100%;
     padding: 16px;
-    /* 押しやすい大きなサイズに復元 */
-    background: #1e1e1e;
-    color: var(--accent);
-    border: 1px dashed var(--border);
+    background: var(--accent);
+    /* 緑色に変更 */
+    color: #fff;
+    /* 白文字に変更 */
+    border: none;
     border-radius: 12px;
     font-size: 1.1em;
     font-weight: bold;
@@ -54,7 +55,8 @@ button#btn-memo-add {
 .memo-card-title {
     font-weight: bold;
     font-size: 1.05em;
-    color: #fff;
+    color: var(--accent);
+    /* 指示通り緑色に復元 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

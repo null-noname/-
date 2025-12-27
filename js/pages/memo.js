@@ -27,7 +27,7 @@ export function init() {
     };
 
     getEl('btn-memo-del').onclick = () => {
-        if (editId && confirm("このメモを削除しますか？")) {
+        if (editId && confirm("本当に削除しますか？")) {
             state.freeMemos = state.freeMemos.filter(m => m.id !== editId);
             saveDB({});
             editorArea.classList.add('hidden');
